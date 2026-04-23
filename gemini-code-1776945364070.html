@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Narmeen Amjad | Architects CRM</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #c5a059; /* Gold/Brass accent for Luxury */
+            --bg: #121212;
+            --card-bg: #1e1e1e;
+            --text: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: #000;
+            height: 100vh;
+            padding: 20px;
+            border-right: 1px solid #333;
+            position: fixed;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 40px;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 10px;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 290px;
+            padding: 40px;
+            width: 100%;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        /* Form Styling */
+        .project-form {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 40px;
+            border: 1px solid #333;
+        }
+
+        input, select {
+            padding: 12px;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            color: white;
+            border-radius: 6px;
+        }
+
+        button {
+            background: var(--primary);
+            color: black;
+            font-weight: bold;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #b08e4d;
+        }
+
+        /* Project Cards */
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            border-top: 4px solid var(--primary);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .card h3 { color: var(--primary); margin-top: 0; }
+        .card p { font-size: 14px; color: #aaa; margin: 5px 0; }
+        .status-tag {
+            background: #2d5a27;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+        
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #ff4d4d;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="logo">NA ARCHITECTS</div>
+        <p><i class="fas fa-th-large"></i> Dashboard</p>
+        <p><i class="fas fa-users"></i> Clients</p>
+        <p><i class="fas fa-drafting-compass"></i> Blueprints</p>
+        <p><i class="fas fa-file-invoice-dollar"></i> Invoices</p>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1>Project Management</h1>
+            <span>Welcome, <b>Narmeen Amjad</b></span>
+        </div>
+
+        <div class="project-form">
+            <input id="client" placeholder="Client Name (e.g. Al-Futtaim Group)">
+            <input id="project" placeholder="Project Name (e.g. Dubai Marina Villa)">
+            <select id="status">
+                <option value="Concept Design">Concept Design</option>
+                <option value="Under Review">Under Review</option>
+                <option value="Construction">Construction</option>
+            </select>
+            <button onclick="addProject()">Add New Project</button>
+        </div>
+
+        <div class="project-grid" id="projectGrid"></div>
+    </div>
+
+    <script>
+        // Demo Data for Dubai Architects
+        const demoData = [
+            { client: "Sheikh Zayed Estate", project: "Luxury Penthouse JBR", status: "Construction" },
+            { client: "Irfan Khan", project: "Modern Office - Business Bay", status: "Concept Design" }
+        ];
+
+        let projects = JSON.parse(localStorage.getItem("na_crm_data")) || demoData;
+
+        function render() {
+            const grid = document.getElementById("projectGrid");
+            grid.innerHTML = "";
+            projects.forEach((item, index) => {
+                grid.innerHTML += `
+                    <div class="card">
+                        <i class="fas fa-trash delete-btn" onclick="deleteProject(${index})"></i>
+                        <h3>${item.project}</h3>
+                        <p><b>Client:</b> ${item.client}</p>
+                        <p><b>Location:</b> Dubai, UAE</p>
+                        <p><span class="status-tag">${item.status}</span></p>
+                    </div>
+                `;
+            });
+        }
+
+        function addProject() {
+            const client = document.getElementById("client").value;
+            const project = document.getElementById("project").value;
+            const status = document.getElementById("status").value;
+
+            if(client && project) {
+                projects.push({ client, project, status });
+                localStorage.setItem("na_crm_data", JSON.stringify(projects));
+                render();
+                document.getElementById("client").value = "";
+                document.getElementById("project").value = "";
+            }
+        }
+
+        function deleteProject(index) {
+            projects.splice(index, 1);
+            localStorage.setItem("na_crm_data", JSON.stringify(projects));
+            render();
+        }
+
+        render();
+    </script>
+</body>
+</html>
